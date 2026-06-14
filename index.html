@@ -1,126 +1,253 @@
 <!DOCTYPE html>
 <html lang="zh-TW" data-bs-theme="light">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>犬貓驅蟲藥快速篩選系統</title>
-    
+
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-    
+
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; transition: background-color 0.3s ease; }
-        .app-container { max-width: 700px; margin: auto; }
-        .card { border-radius: 12px; border: none; }
-        .result-card { transition: transform 0.2s, box-shadow 0.2s; border-left: 5px solid #0d6efd; cursor: pointer; }
-        .result-card:hover { transform: translateY(-3px); box-shadow: 0 8px 15px rgba(0,0,0,0.1) !important; }
-        .badge-method { background-color: #6f42c1; color: white; }
-        
-        .form-switch .form-check-input { width: 3em; height: 1.5em; margin-right: 0.8em; }
-        .form-check-label { font-size: 1.1rem; padding-top: 0.15em; }
-        .nav-tabs .nav-link { font-size: 1.1rem; font-weight: bold; color: #6c757d; }
-        .nav-tabs .nav-link.active { color: #0d6efd; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            transition: background-color 0.3s ease;
+        }
+
+        .app-container {
+            max-width: 700px;
+            margin: auto;
+        }
+
+        .card {
+            border-radius: 12px;
+            border: none;
+        }
+
+        .result-card {
+            transition: transform 0.2s, box-shadow 0.2s;
+            border-left: 5px solid #0d6efd;
+            cursor: pointer;
+        }
+
+        .result-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1) !important;
+        }
+
+        .badge-method {
+            background-color: #6f42c1;
+            color: white;
+        }
+
+        .form-switch .form-check-input {
+            width: 3em;
+            height: 1.5em;
+            margin-right: 0.8em;
+        }
+
+        .form-check-label {
+            font-size: 1.1rem;
+            padding-top: 0.15em;
+        }
+
+        .nav-tabs .nav-link {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #6c757d;
+        }
+
+        .nav-tabs .nav-link.active {
+            color: #0d6efd;
+        }
     </style>
 </head>
+
 <body class="bg-body-tertiary">
 
-<div class="container py-4 app-container">
-    
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="text-primary fw-bold mb-0">
-            <i class="bi bi-shield-fill-plus"></i> 犬貓用藥篩選器
-        </h2>
-        <button id="darkModeToggle" class="btn btn-outline-secondary rounded-circle shadow-sm">
-            <i class="bi bi-moon-fill"></i>
-        </button>
-    </div>
+    <div class="container py-4 app-container">
 
-    <ul class="nav nav-tabs mb-4 shadow-sm bg-body rounded-top" id="appTabs" role="tablist">
-        <li class="nav-item" role="presentation" style="flex: 1; text-align: center;">
-            <button class="nav-link active w-100 py-3" id="filter-tab" data-bs-toggle="tab" data-bs-target="#filter-pane" type="button" role="tab">
-                <i class="bi bi-funnel-fill"></i> 條件精準篩選
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="text-primary fw-bold mb-0">
+                <i class="bi bi-shield-fill-plus"></i> 犬貓用藥篩選器
+            </h2>
+            <button id="darkModeToggle" class="btn btn-outline-secondary rounded-circle shadow-sm">
+                <i class="bi bi-moon-fill"></i>
             </button>
-        </li>
-        <li class="nav-item" role="presentation" style="flex: 1; text-align: center;">
-            <button class="nav-link w-100 py-3" id="browse-tab" data-bs-toggle="tab" data-bs-target="#browse-pane" type="button" role="tab">
-                <i class="bi bi-journal-medical"></i> 藥典總覽
-            </button>
-        </li>
-    </ul>
+        </div>
 
-    <div class="tab-content" id="appTabsContent">
-        
-        <div class="tab-pane fade show active" id="filter-pane" role="tabpanel">
-            <div class="card shadow-sm mb-4">
-                <div class="card-body">
-                    <div class="row g-4 mb-4">
-                        <div class="col-6">
-                            <label class="form-label fw-bold text-secondary"><i class="bi bi-search"></i> 寵物物種</label>
-                            <select class="form-select form-select-lg shadow-sm" id="species">
-                                <option value="dog">🐶 狗狗</option>
-                                <option value="cat">🐱 貓咪</option>
-                            </select>
-                        </div>
-                        <div class="col-6">
-                            <label class="form-label fw-bold text-secondary"><i class="bi bi-speedometer2"></i> 體重</label>
-                            <div class="input-group input-group-lg shadow-sm">
-                                <input type="number" class="form-control" id="weight" step="0.1" value="3.0">
-                                <span class="input-group-text bg-body">kg</span>
+        <ul class="nav nav-tabs mb-4 shadow-sm bg-body rounded-top" id="appTabs" role="tablist">
+            <li class="nav-item" role="presentation" style="flex: 1; text-align: center;">
+                <button class="nav-link active w-100 py-3" id="filter-tab" data-bs-toggle="tab"
+                    data-bs-target="#filter-pane" type="button" role="tab">
+                    <i class="bi bi-funnel-fill"></i> 條件精準篩選
+                </button>
+            </li>
+            <li class="nav-item" role="presentation" style="flex: 1; text-align: center;">
+                <button class="nav-link w-100 py-3" id="browse-tab" data-bs-toggle="tab" data-bs-target="#browse-pane"
+                    type="button" role="tab">
+                    <i class="bi bi-journal-medical"></i> 藥典總覽
+                </button>
+            </li>
+        </ul>
+
+        <div class="tab-content" id="appTabsContent">
+
+            <div class="tab-pane fade show active" id="filter-pane" role="tabpanel">
+                <div class="card shadow-sm mb-4">
+                    <div class="card-body">
+                        <div class="row g-4 mb-4">
+                            <div class="col-6">
+                                <label class="form-label fw-bold text-secondary"><i class="bi bi-search"></i>
+                                    寵物物種</label>
+                                <select class="form-select form-select-lg shadow-sm" id="species">
+                                    <option value="dog">🐶 狗狗</option>
+                                    <option value="cat">🐱 貓咪</option>
+                                </select>
                             </div>
-                        </div>
-                        
-                        <div class="col-12">
-                            <div class="d-flex justify-content-between align-items-center mb-2">
-                                <label class="form-label fw-bold text-secondary mb-0"><i class="bi bi-calendar-event"></i> 年齡</label>
-                                <div class="form-check form-switch mb-0">
-                                    <input class="form-check-input" type="checkbox" id="isAdult">
-                                    <label class="form-check-label text-primary fw-bold" style="font-size: 0.9rem;" for="isAdult" id="adultLabel">已成年</label>
+                            <div class="col-6">
+                                <label class="form-label fw-bold text-secondary"><i class="bi bi-speedometer2"></i>
+                                    體重</label>
+                                <div class="input-group input-group-lg shadow-sm">
+                                    <input type="number" class="form-control" id="weight" step="0.1" value="3.0">
+                                    <span class="input-group-text bg-body">kg</span>
                                 </div>
                             </div>
-                            <div class="input-group shadow-sm">
-                                <input type="number" class="form-control" id="ageWeeks" value="8">
-                                <span class="input-group-text bg-body">週大</span>
+
+                            <div class="col-12">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <label class="form-label fw-bold text-secondary mb-0"><i
+                                            class="bi bi-calendar-event"></i> 年齡</label>
+                                    <div class="form-check form-switch mb-0">
+                                        <input class="form-check-input" type="checkbox" id="isAdult">
+                                        <label class="form-check-label text-primary fw-bold" style="font-size: 0.9rem;"
+                                            for="isAdult" id="adultLabel">已成年</label>
+                                    </div>
+                                </div>
+                                <div class="input-group shadow-sm">
+                                    <input type="number" class="form-control" id="ageWeeks" value="8">
+                                    <span class="input-group-text bg-body">週大</span>
+                                </div>
                             </div>
                         </div>
-                    </div>
 
-                    <h6 class="fw-bold text-primary mb-3"><i class="bi bi-ui-checks-grid"></i> 防護與安全性需求</h6>
-                    <div class="accordion shadow-sm" id="filterAccordion">
-                        
-                        <div class="accordion-item">
-                            <h2 class="accordion-header"><button class="accordion-button fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#colPara">寄生蟲防護範圍</button></h2>
-                            <div id="colPara" class="accordion-collapse collapse show">
-                                <div class="accordion-body">
-                                    <div class="row g-3">
-                                        <div class="col-12 text-muted small fw-bold mb-1">體外寄生蟲</div>
-                                        <div class="col-6"><div class="form-check form-switch"><input class="form-check-input dyn-filter" type="checkbox" id="f_flea"><label class="form-check-label" for="f_flea">跳蚤</label></div></div>
-                                        <div class="col-6"><div class="form-check form-switch"><input class="form-check-input dyn-filter" type="checkbox" id="f_tick"><label class="form-check-label" for="f_tick">壁蝨</label></div></div>
-                                        <div class="col-12"><hr class="my-1 border-secondary opacity-25"></div>
-                                        <div class="col-6"><div class="form-check form-switch"><input class="form-check-input dyn-filter" type="checkbox" id="f_mite_d"><label class="form-check-label" for="f_mite_d">毛囊蟲</label></div></div>
-                                        <div class="col-6"><div class="form-check form-switch"><input class="form-check-input dyn-filter" type="checkbox" id="f_mite_s"><label class="form-check-label" for="f_mite_s">疥癬蟲</label></div></div>
-                                        <div class="col-6"><div class="form-check form-switch"><input class="form-check-input dyn-filter" type="checkbox" id="f_mite_o"><label class="form-check-label" for="f_mite_o">耳疥蟲</label></div></div>
-                                        
-                                        <div class="col-12 mt-3 text-muted small fw-bold mb-1">體內寄生蟲</div>
-                                        <div class="col-6"><div class="form-check form-switch"><input class="form-check-input dyn-filter" type="checkbox" id="f_heartworm"><label class="form-check-label" for="f_heartworm">心絲蟲</label></div></div>
-                                        <div class="col-6"><div class="form-check form-switch"><input class="form-check-input dyn-filter" type="checkbox" id="f_tapeworm"><label class="form-check-label" for="f_tapeworm">絛蟲</label></div></div>
-                                        <div class="col-6"><div class="form-check form-switch"><input class="form-check-input dyn-filter" type="checkbox" id="f_roundworm"><label class="form-check-label" for="f_roundworm">腸道線蟲(蛔)</label></div></div>
-                                        <div class="col-6"><div class="form-check form-switch"><input class="form-check-input dyn-filter" type="checkbox" id="f_hookworm"><label class="form-check-label" for="f_hookworm">腸道線蟲(鉤)</label></div></div>
+                        <h6 class="fw-bold text-primary mb-3"><i class="bi bi-ui-checks-grid"></i> 防護與安全性需求</h6>
+                        <div class="accordion shadow-sm" id="filterAccordion">
+
+                            <div class="accordion-item">
+                                <h2 class="accordion-header"><button class="accordion-button fw-bold" type="button"
+                                        data-bs-toggle="collapse" data-bs-target="#colPara">寄生蟲防護範圍</button></h2>
+                                <div id="colPara" class="accordion-collapse collapse show">
+                                    <div class="accordion-body">
+                                        <div class="row g-3">
+                                            <div class="col-12 text-muted small fw-bold mb-1">體外寄生蟲</div>
+                                            <div class="col-6">
+                                                <div class="form-check form-switch"><input
+                                                        class="form-check-input dyn-filter" type="checkbox"
+                                                        id="f_flea"><label class="form-check-label"
+                                                        for="f_flea">跳蚤</label></div>
+                                            </div>
+                                            <div class="col-6">
+                                                <div class="form-check form-switch"><input
+                                                        class="form-check-input dyn-filter" type="checkbox"
+                                                        id="f_tick"><label class="form-check-label"
+                                                        for="f_tick">壁蝨</label></div>
+                                            </div>
+                                            <div class="col-12">
+                                                <hr class="my-1 border-secondary opacity-25">
+                                            </div>
+                                            <div class="col-6">
+                                                <div class="form-check form-switch"><input
+                                                        class="form-check-input dyn-filter" type="checkbox"
+                                                        id="f_mite_d"><label class="form-check-label"
+                                                        for="f_mite_d">毛囊蟲</label></div>
+                                            </div>
+                                            <div class="col-6">
+                                                <div class="form-check form-switch"><input
+                                                        class="form-check-input dyn-filter" type="checkbox"
+                                                        id="f_mite_s"><label class="form-check-label"
+                                                        for="f_mite_s">疥癬蟲</label></div>
+                                            </div>
+                                            <div class="col-6">
+                                                <div class="form-check form-switch"><input
+                                                        class="form-check-input dyn-filter" type="checkbox"
+                                                        id="f_mite_o"><label class="form-check-label"
+                                                        for="f_mite_o">耳疥蟲</label></div>
+                                            </div>
+
+                                            <div class="col-12 mt-3 text-muted small fw-bold mb-1">體內寄生蟲</div>
+                                            <div class="col-6">
+                                                <div class="form-check form-switch"><input
+                                                        class="form-check-input dyn-filter" type="checkbox"
+                                                        id="f_heartworm"><label class="form-check-label"
+                                                        for="f_heartworm">心絲蟲</label></div>
+                                            </div>
+                                            <div class="col-6">
+                                                <div class="form-check form-switch"><input
+                                                        class="form-check-input dyn-filter" type="checkbox"
+                                                        id="f_tapeworm"><label class="form-check-label"
+                                                        for="f_tapeworm">絛蟲</label></div>
+                                            </div>
+                                            <div class="col-6">
+                                                <div class="form-check form-switch"><input
+                                                        class="form-check-input dyn-filter" type="checkbox"
+                                                        id="f_roundworm"><label class="form-check-label"
+                                                        for="f_roundworm">腸道線蟲(蛔)</label></div>
+                                            </div>
+                                            <div class="col-6">
+                                                <div class="form-check form-switch"><input
+                                                        class="form-check-input dyn-filter" type="checkbox"
+                                                        id="f_hookworm"><label class="form-check-label"
+                                                        for="f_hookworm">腸道線蟲(鉤)</label></div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
 
-                        <div class="accordion-item">
-                            <h2 class="accordion-header"><button class="accordion-button collapsed fw-bold" type="button" data-bs-toggle="collapse" data-bs-target="#colSafe">用藥安全與劑型限制</button></h2>
-                            <div id="colSafe" class="accordion-collapse collapse">
-                                <div class="accordion-body">
-                                    <div class="row g-3">
-                                        <div class="col-6"><div class="form-check form-switch"><input class="form-check-input dyn-filter" type="checkbox" id="f_pregnant"><label class="form-check-label" for="f_pregnant">懷孕期可用</label></div></div>
-                                        <div class="col-6"><div class="form-check form-switch"><input class="form-check-input dyn-filter" type="checkbox" id="f_nursing"><label class="form-check-label" for="f_nursing">哺乳期可用</label></div></div>
-                                        <div class="col-12"><div class="form-check form-switch"><input class="form-check-input dyn-filter" type="checkbox" id="f_collie"><label class="form-check-label text-danger fw-bold" for="f_collie">牧羊犬相對安全</label></div></div>
-                                        <div class="col-12"><hr class="my-1 border-secondary opacity-25"></div>
-                                        <div class="col-6"><div class="form-check form-switch"><input class="form-check-input dyn-filter" type="checkbox" id="f_oral"><label class="form-check-label" for="f_oral">限口服</label></div></div>
-                                        <div class="col-6"><div class="form-check form-switch"><input class="form-check-input dyn-filter" type="checkbox" id="f_drop"><label class="form-check-label" for="f_drop">限滴劑</label></div></div>
+                            <div class="accordion-item">
+                                <h2 class="accordion-header"><button class="accordion-button collapsed fw-bold"
+                                        type="button" data-bs-toggle="collapse"
+                                        data-bs-target="#colSafe">用藥安全與劑型限制</button></h2>
+                                <div id="colSafe" class="accordion-collapse collapse">
+                                    <div class="accordion-body">
+                                        <div class="row g-3">
+                                            <div class="col-6">
+                                                <div class="form-check form-switch"><input
+                                                        class="form-check-input dyn-filter" type="checkbox"
+                                                        id="f_pregnant"><label class="form-check-label"
+                                                        for="f_pregnant">懷孕期可用</label></div>
+                                            </div>
+                                            <div class="col-6">
+                                                <div class="form-check form-switch"><input
+                                                        class="form-check-input dyn-filter" type="checkbox"
+                                                        id="f_nursing"><label class="form-check-label"
+                                                        for="f_nursing">哺乳期可用</label></div>
+                                            </div>
+                                            <div class="col-12">
+                                                <div class="form-check form-switch"><input
+                                                        class="form-check-input dyn-filter" type="checkbox"
+                                                        id="f_collie"><label
+                                                        class="form-check-label text-danger fw-bold"
+                                                        for="f_collie">牧羊犬相對安全</label></div>
+                                            </div>
+                                            <div class="col-12">
+                                                <hr class="my-1 border-secondary opacity-25">
+                                            </div>
+                                            <div class="col-6">
+                                                <div class="form-check form-switch"><input
+                                                        class="form-check-input dyn-filter" type="checkbox"
+                                                        id="f_oral"><label class="form-check-label"
+                                                        for="f_oral">限口服</label></div>
+                                            </div>
+                                            <div class="col-6">
+                                                <div class="form-check form-switch"><input
+                                                        class="form-check-input dyn-filter" type="checkbox"
+                                                        id="f_drop"><label class="form-check-label"
+                                                        for="f_drop">限滴劑</label></div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -128,246 +255,267 @@
                     </div>
                 </div>
             </div>
+
+            <div class="tab-pane fade" id="browse-pane" role="tabpanel">
+                <div class="card shadow-sm mb-4 bg-body">
+                    <div class="card-body">
+                        <div class="input-group input-group-lg shadow-sm mb-3">
+                            <span class="input-group-text bg-body"><i class="bi bi-search"></i></span>
+                            <input type="text" class="form-control" id="searchKeyword" placeholder="搜尋藥品名稱或成分...">
+                        </div>
+                        <div class="d-flex gap-2 overflow-auto pb-2" style="white-space: nowrap;">
+                            <input type="radio" class="btn-check" name="browseType" id="b_all" value="all" checked>
+                            <label class="btn btn-outline-primary rounded-pill shadow-sm" for="b_all">全部</label>
+
+                            <input type="radio" class="btn-check" name="browseType" id="b_dog" value="dog">
+                            <label class="btn btn-outline-primary rounded-pill shadow-sm" for="b_dog">🐶 狗專用</label>
+
+                            <input type="radio" class="btn-check" name="browseType" id="b_cat" value="cat">
+                            <label class="btn btn-outline-primary rounded-pill shadow-sm" for="b_cat">🐱 貓專用</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         </div>
 
-        <div class="tab-pane fade" id="browse-pane" role="tabpanel">
-            <div class="card shadow-sm mb-4 bg-body">
-                <div class="card-body">
-                    <div class="input-group input-group-lg shadow-sm mb-3">
-                        <span class="input-group-text bg-body"><i class="bi bi-search"></i></span>
-                        <input type="text" class="form-control" id="searchKeyword" placeholder="搜尋藥品名稱或成分...">
+        <div class="mb-3 d-flex justify-content-between align-items-center px-2">
+            <h5 class="mb-0 fw-bold text-secondary">查詢結果</h5>
+            <span class="badge bg-primary rounded-pill fs-6 shadow-sm" id="resultCount">共 0 筆</span>
+        </div>
+        <div id="results" class="row g-3"></div>
+
+    </div>
+
+    <div class="modal fade" id="drugModal" tabindex="-1" aria-labelledby="drugModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content border-0 shadow-lg">
+                <div class="modal-header text-white bg-primary">
+                    <h4 class="modal-title fw-bold" id="m_title">藥品名稱</h4>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body bg-body-tertiary">
+                    <div class="d-flex gap-2 mb-3" id="m_tags"></div>
+
+                    <div class="card border-0 shadow-sm mb-3">
+                        <div class="card-body">
+                            <h6 class="fw-bold text-secondary mb-2"><i class="bi bi-info-circle-fill"></i> 適用對象反查</h6>
+                            <ul class="list-group list-group-flush small" id="m_targets"></ul>
+                        </div>
                     </div>
-                    <div class="d-flex gap-2 overflow-auto pb-2" style="white-space: nowrap;">
-                        <input type="radio" class="btn-check" name="browseType" id="b_all" value="all" checked>
-                        <label class="btn btn-outline-primary rounded-pill shadow-sm" for="b_all">全部</label>
 
-                        <input type="radio" class="btn-check" name="browseType" id="b_dog" value="dog">
-                        <label class="btn btn-outline-primary rounded-pill shadow-sm" for="b_dog">🐶 狗專用</label>
+                    <div class="card border-0 shadow-sm mb-3">
+                        <div class="card-body pb-1">
+                            <h6 class="fw-bold text-secondary mb-2"><i class="bi bi-shield-check"></i> 防護範圍</h6>
+                            <p id="m_scope" class="small text-body"></p>
+                        </div>
+                    </div>
 
-                        <input type="radio" class="btn-check" name="browseType" id="b_cat" value="cat">
-                        <label class="btn btn-outline-primary rounded-pill shadow-sm" for="b_cat">🐱 貓專用</label>
+                    <div class="alert alert-warning border-0 shadow-sm mb-0">
+                        <h6 class="fw-bold mb-2"><i class="bi bi-exclamation-triangle-fill"></i> 注意事項與成分</h6>
+                        <p id="m_notes" class="small mb-2"></p>
+                        <hr class="border-warning opacity-50 my-2">
+                        <p id="m_ingredients" class="small mb-0 text-muted"></p>
                     </div>
                 </div>
             </div>
         </div>
-
     </div>
-
     <div class="mb-3 d-flex justify-content-between align-items-center px-2">
         <h5 class="mb-0 fw-bold text-secondary">查詢結果</h5>
         <span class="badge bg-primary rounded-pill fs-6 shadow-sm" id="resultCount">共 0 筆</span>
     </div>
     <div id="results" class="row g-3"></div>
 
-</div>
-
-<div class="modal fade" id="drugModal" tabindex="-1" aria-labelledby="drugModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-        <div class="modal-content border-0 shadow-lg">
-            <div class="modal-header text-white bg-primary">
-                <h4 class="modal-title fw-bold" id="m_title">藥品名稱</h4>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body bg-body-tertiary">
-                <div class="d-flex gap-2 mb-3" id="m_tags"></div>
-                
-                <div class="card border-0 shadow-sm mb-3">
-                    <div class="card-body">
-                        <h6 class="fw-bold text-secondary mb-2"><i class="bi bi-info-circle-fill"></i> 適用對象反查</h6>
-                        <ul class="list-group list-group-flush small" id="m_targets"></ul>
-                    </div>
-                </div>
-
-                <div class="card border-0 shadow-sm mb-3">
-                    <div class="card-body pb-1">
-                        <h6 class="fw-bold text-secondary mb-2"><i class="bi bi-shield-check"></i> 防護範圍</h6>
-                        <p id="m_scope" class="small text-body"></p>
-                    </div>
-                </div>
-
-                <div class="alert alert-warning border-0 shadow-sm mb-0">
-                    <h6 class="fw-bold mb-2"><i class="bi bi-exclamation-triangle-fill"></i> 注意事項與成分</h6>
-                    <p id="m_notes" class="small mb-2"></p>
-                    <hr class="border-warning opacity-50 my-2">
-                    <p id="m_ingredients" class="small mb-0 text-muted"></p>
-                </div>
-            </div>
+    <footer class="mt-5 pt-4 border-top border-secondary-subtle opacity-75">
+        <div class="text-muted" style="font-size: 0.85rem; line-height: 1.6;">
+            <h6 class="fw-bold text-secondary mb-2">
+                <i class="bi bi-exclamation-triangle-fill text-warning"></i> 免責聲明與使用條款
+            </h6>
+            <p class="mb-1">
+                本系統所提供之篩選結果與藥品資訊，皆彙整自公開仿單，<strong>僅供一般參考之用，絕不能替代專業獸醫師的臨床診斷與處方。</strong>
+            </p>
+            <p class="mb-1">
+                藥廠可能隨時更新成分或限制，本系統不保證資訊皆為最新且完全無誤。每隻寵物健康狀況（如過敏史、牧羊犬基因特質）皆不同，使用任何藥物前，請務必與主治獸醫師諮詢，並親自詳閱實體包裝仿單。
+            </p>
+            <p class="mb-0">
+                因依賴本系統資訊而採取之任何行動，所產生之潛在風險或寵物健康損害，本系統開發者與資料維護者概不負責。
+            </p>
         </div>
-    </div>
-</div>
+    </footer>
+    </div> <div class="modal fade" id="drugModal" tabindex="-1" aria-labelledby="drugModalLabel" aria-hidden="true">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        class DrugModel {
+            constructor() {
+                this.database = [];
+                this.csvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQNElk0z4WhmhFULXtblpENwIukplYoKwrXH9_shMuaVT85vMxHVkKhl-H4HPGiBYP30mQPTtWBvO56/pub?gid=0&single=true&output=csv';
+                this.k = {};
+                this.maxAgeDays = { dog: 0, cat: 0 }; // 紀錄犬貓最大年齡門檻
+            }
 
-<script>
-class DrugModel {
-    constructor() {
-        this.database = [];
-        this.csvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQNElk0z4WhmhFULXtblpENwIukplYoKwrXH9_shMuaVT85vMxHVkKhl-H4HPGiBYP30mQPTtWBvO56/pub?gid=0&single=true&output=csv'; 
-        this.k = {}; 
-        this.maxAgeDays = { dog: 0, cat: 0 }; // 紀錄犬貓最大年齡門檻
-    }
+            async init() {
+                try {
+                    const response = await fetch(this.csvUrl);
+                    const csvText = await response.text();
 
-    async init() {
-        try {
-            const response = await fetch(this.csvUrl);
-            const csvText = await response.text();
-            
-            const parsed = Papa.parse(csvText.trim(), { header: true, skipEmptyLines: true });
-            this.database = parsed.data;
+                    const parsed = Papa.parse(csvText.trim(), { header: true, skipEmptyLines: true });
+                    this.database = parsed.data;
 
-            if(this.database.length > 0) {
-                const keys = Object.keys(this.database[0]);
-                this.k = {
-                    collie: keys.find(k => k.includes('牧羊犬') && k.includes('同意')),
-                    miteAll: keys.find(k => k.includes('毛囊')),
-                    miteS: keys.find(k => k.includes('疥癬') && !k.includes('毛囊')),
-                    miteO: keys.find(k => k.includes('耳疥') && !k.includes('毛囊')),
-                    roundworm: keys.find(k => k.includes('腸道線蟲') && k.includes('蛔')),
-                    hookworm: keys.find(k => k.includes('腸道線蟲') && k.includes('鉤')),
-                    minW: keys.find(k => k.includes('商品最小體重')),
-                    minA: keys.find(k => k.includes('最小年齡'))
-                };
+                    if (this.database.length > 0) {
+                        const keys = Object.keys(this.database[0]);
+                        this.k = {
+                            collie: keys.find(k => k.includes('牧羊犬') && k.includes('同意')),
+                            miteAll: keys.find(k => k.includes('毛囊')),
+                            miteS: keys.find(k => k.includes('疥癬') && !k.includes('毛囊')),
+                            miteO: keys.find(k => k.includes('耳疥') && !k.includes('毛囊')),
+                            roundworm: keys.find(k => k.includes('腸道線蟲') && k.includes('蛔')),
+                            hookworm: keys.find(k => k.includes('腸道線蟲') && k.includes('鉤')),
+                            minW: keys.find(k => k.includes('商品最小體重')),
+                            minA: keys.find(k => k.includes('最小年齡'))
+                        };
 
-                // 動態計算犬、貓的最大年齡需求
-                this.database.forEach(row => {
-                    const age = parseFloat(row[this.k.minA]) || 0;
-                    if (row['犬'] === 'TRUE' && age > this.maxAgeDays.dog) this.maxAgeDays.dog = age;
-                    if (row['貓'] === 'TRUE' && age > this.maxAgeDays.cat) this.maxAgeDays.cat = age;
+                        // 動態計算犬、貓的最大年齡需求
+                        this.database.forEach(row => {
+                            const age = parseFloat(row[this.k.minA]) || 0;
+                            if (row['犬'] === 'TRUE' && age > this.maxAgeDays.dog) this.maxAgeDays.dog = age;
+                            if (row['貓'] === 'TRUE' && age > this.maxAgeDays.cat) this.maxAgeDays.cat = age;
+                        });
+                    }
+                } catch (error) {
+                    alert("載入資料失敗。");
+                }
+            }
+
+            getFilteredData(mode, criteria) {
+                return this.database.filter(row => {
+                    if (mode === 'filter') {
+                        const matchSpecies = criteria.species === 'dog' ? (row['犬'] === 'TRUE') : (row['貓'] === 'TRUE');
+                        const w = parseFloat(row[this.k.minW]) || 0;
+                        const a = parseFloat(row[this.k.minA]) || 0;
+
+                        // 年齡判斷：如果勾選已成年，則自動通過年齡門檻
+                        const matchAge = criteria.isAdult ? true : (criteria.ageDays >= a);
+
+                        if (!matchSpecies || criteria.weight < w || !matchAge) return false;
+
+                        if (criteria.f_flea && row['跳蚤'] !== 'TRUE') return false;
+                        if (criteria.f_tick && row['壁蝨'] !== 'TRUE') return false;
+                        if (criteria.f_heartworm && row['心絲蟲'] !== 'TRUE') return false;
+                        if (criteria.f_tapeworm && row['絛蟲'] !== 'TRUE') return false;
+                        if (criteria.f_roundworm && row[this.k.roundworm] !== 'TRUE') return false;
+                        if (criteria.f_hookworm && row[this.k.hookworm] !== 'TRUE') return false;
+
+                        const isAllMite = row[this.k.miteAll] === 'TRUE';
+                        if (criteria.f_mite_d && !isAllMite) return false;
+                        if (criteria.f_mite_s && !isAllMite && row[this.k.miteS] !== 'TRUE') return false;
+                        if (criteria.f_mite_o && !isAllMite && row[this.k.miteO] !== 'TRUE') return false;
+
+                        if (criteria.f_pregnant && row['懷孕'] !== 'TRUE') return false;
+                        if (criteria.f_nursing && row['配種/哺乳'] !== 'TRUE') return false;
+                        if (criteria.f_collie && row[this.k.collie] !== 'TRUE') return false;
+
+                        if (criteria.f_oral && row['口服'] !== 'TRUE') return false;
+                        if (criteria.f_drop && row['滴劑'] !== 'TRUE') return false;
+
+                        return true;
+
+                    } else if (mode === 'browse') {
+                        if (criteria.bType === 'dog' && row['犬'] !== 'TRUE') return false;
+                        if (criteria.bType === 'cat' && row['貓'] !== 'TRUE') return false;
+                        if (criteria.keyword) {
+                            const searchStr = (row['商品'] + " " + row['內容1(主要內容)']).toLowerCase();
+                            if (!searchStr.includes(criteria.keyword.toLowerCase())) return false;
+                        }
+                        return true;
+                    }
                 });
             }
-        } catch (error) {
-            alert("載入資料失敗。");
         }
-    }
 
-    getFilteredData(mode, criteria) {
-        return this.database.filter(row => {
-            if (mode === 'filter') {
-                const matchSpecies = criteria.species === 'dog' ? (row['犬'] === 'TRUE') : (row['貓'] === 'TRUE');
-                const w = parseFloat(row[this.k.minW]) || 0;
-                const a = parseFloat(row[this.k.minA]) || 0;
-                
-                // 年齡判斷：如果勾選已成年，則自動通過年齡門檻
-                const matchAge = criteria.isAdult ? true : (criteria.ageDays >= a);
-
-                if (!matchSpecies || criteria.weight < w || !matchAge) return false;
-
-                if (criteria.f_flea && row['跳蚤'] !== 'TRUE') return false;
-                if (criteria.f_tick && row['壁蝨'] !== 'TRUE') return false;
-                if (criteria.f_heartworm && row['心絲蟲'] !== 'TRUE') return false;
-                if (criteria.f_tapeworm && row['絛蟲'] !== 'TRUE') return false;
-                if (criteria.f_roundworm && row[this.k.roundworm] !== 'TRUE') return false;
-                if (criteria.f_hookworm && row[this.k.hookworm] !== 'TRUE') return false;
-
-                const isAllMite = row[this.k.miteAll] === 'TRUE';
-                if (criteria.f_mite_d && !isAllMite) return false;
-                if (criteria.f_mite_s && !isAllMite && row[this.k.miteS] !== 'TRUE') return false;
-                if (criteria.f_mite_o && !isAllMite && row[this.k.miteO] !== 'TRUE') return false;
-
-                if (criteria.f_pregnant && row['懷孕'] !== 'TRUE') return false;
-                if (criteria.f_nursing && row['配種/哺乳'] !== 'TRUE') return false;
-                if (criteria.f_collie && row[this.k.collie] !== 'TRUE') return false;
-
-                if (criteria.f_oral && row['口服'] !== 'TRUE') return false;
-                if (criteria.f_drop && row['滴劑'] !== 'TRUE') return false;
-
-                return true;
-
-            } else if (mode === 'browse') {
-                if (criteria.bType === 'dog' && row['犬'] !== 'TRUE') return false;
-                if (criteria.bType === 'cat' && row['貓'] !== 'TRUE') return false;
-                if (criteria.keyword) {
-                    const searchStr = (row['商品'] + " " + row['內容1(主要內容)']).toLowerCase();
-                    if (!searchStr.includes(criteria.keyword.toLowerCase())) return false;
-                }
-                return true;
+        class AppView {
+            constructor() {
+                this.resultsContainer = document.getElementById('results');
+                this.resultCount = document.getElementById('resultCount');
+                this.modal = new bootstrap.Modal(document.getElementById('drugModal'));
             }
-        });
-    }
-}
 
-class AppView {
-    constructor() {
-        this.resultsContainer = document.getElementById('results');
-        this.resultCount = document.getElementById('resultCount');
-        this.modal = new bootstrap.Modal(document.getElementById('drugModal'));
-    }
+            getMode() {
+                return document.getElementById('filter-tab').classList.contains('active') ? 'filter' : 'browse';
+            }
 
-    getMode() {
-        return document.getElementById('filter-tab').classList.contains('active') ? 'filter' : 'browse';
-    }
+            getCriteria(mode) {
+                if (mode === 'filter') {
+                    const c = {
+                        species: document.getElementById('species').value,
+                        weight: parseFloat(document.getElementById('weight').value) || 0,
+                        ageDays: (parseFloat(document.getElementById('ageWeeks').value) || 0) * 7,
+                        isAdult: document.getElementById('isAdult').checked
+                    };
+                    document.querySelectorAll('.dyn-filter').forEach(el => c[el.id] = el.checked);
+                    return c;
+                } else {
+                    return {
+                        bType: document.querySelector('input[name="browseType"]:checked').value,
+                        keyword: document.getElementById('searchKeyword').value.trim()
+                    };
+                }
+            }
 
-    getCriteria(mode) {
-        if (mode === 'filter') {
-            const c = {
-                species: document.getElementById('species').value,
-                weight: parseFloat(document.getElementById('weight').value) || 0,
-                ageDays: (parseFloat(document.getElementById('ageWeeks').value) || 0) * 7,
-                isAdult: document.getElementById('isAdult').checked
-            };
-            document.querySelectorAll('.dyn-filter').forEach(el => c[el.id] = el.checked);
-            return c;
-        } else {
-            return {
-                bType: document.querySelector('input[name="browseType"]:checked').value,
-                keyword: document.getElementById('searchKeyword').value.trim()
-            };
-        }
-    }
+            // 處理 UI：更新成年標準與輸入框狀態
+            updateAdultUI(species, maxAgeDays) {
+                const months = Math.ceil(maxAgeDays / 30); // 概算成個月
+                document.getElementById('adultLabel').textContent = `已成年 (滿 ${months} 個月大)`;
 
-    // 處理 UI：更新成年標準與輸入框狀態
-    updateAdultUI(species, maxAgeDays) {
-        const months = Math.ceil(maxAgeDays / 30); // 概算成個月
-        document.getElementById('adultLabel').textContent = `已成年 (滿 ${months} 個月大)`;
-        
-        const isAdult = document.getElementById('isAdult').checked;
-        const ageInput = document.getElementById('ageWeeks');
-        ageInput.disabled = isAdult;
-        ageInput.style.opacity = isAdult ? '0.4' : '1';
-    }
+                const isAdult = document.getElementById('isAdult').checked;
+                const ageInput = document.getElementById('ageWeeks');
+                ageInput.disabled = isAdult;
+                ageInput.style.opacity = isAdult ? '0.4' : '1';
+            }
 
-    bindEvents(handler) {
-        document.querySelectorAll('input, select').forEach(el => {
-            el.addEventListener('change', handler);
-            el.addEventListener('input', handler); 
-        });
-        
-        document.querySelectorAll('button[data-bs-toggle="tab"]').forEach(el => {
-            el.addEventListener('shown.bs.tab', handler);
-        });
+            bindEvents(handler) {
+                document.querySelectorAll('input, select').forEach(el => {
+                    el.addEventListener('change', handler);
+                    el.addEventListener('input', handler);
+                });
 
-        const root = document.documentElement;
-        const toggleBtn = document.getElementById('darkModeToggle');
-        toggleBtn.addEventListener('click', () => {
-            const current = root.getAttribute('data-bs-theme');
-            const next = current === 'dark' ? 'light' : 'dark';
-            root.setAttribute('data-bs-theme', next);
-            toggleBtn.innerHTML = next === 'dark' ? '<i class="bi bi-sun-fill"></i>' : '<i class="bi bi-moon-fill"></i>';
-        });
-    }
+                document.querySelectorAll('button[data-bs-toggle="tab"]').forEach(el => {
+                    el.addEventListener('shown.bs.tab', handler);
+                });
 
-    renderResults(data) {
-        this.resultsContainer.innerHTML = ''; 
-        this.resultCount.textContent = `共 ${data.length} 筆`;
+                const root = document.documentElement;
+                const toggleBtn = document.getElementById('darkModeToggle');
+                toggleBtn.addEventListener('click', () => {
+                    const current = root.getAttribute('data-bs-theme');
+                    const next = current === 'dark' ? 'light' : 'dark';
+                    root.setAttribute('data-bs-theme', next);
+                    toggleBtn.innerHTML = next === 'dark' ? '<i class="bi bi-sun-fill"></i>' : '<i class="bi bi-moon-fill"></i>';
+                });
+            }
 
-        if (data.length === 0) {
-            this.resultsContainer.innerHTML = `<div class="col-12 text-center py-5 text-muted"><i class="bi bi-search fs-1 d-block mb-3 opacity-50"></i><p class="fs-5">找不到符合條件的藥品</p></div>`;
-            return;
-        }
+            renderResults(data) {
+                this.resultsContainer.innerHTML = '';
+                this.resultCount.textContent = `共 ${data.length} 筆`;
 
-        let html = '';
-        data.forEach(drug => {
-            let methods = [];
-            if(drug['口服'] === 'TRUE') methods.push('口服');
-            if(drug['滴劑'] === 'TRUE') methods.push('滴劑');
-            if(drug['噴劑'] === 'TRUE') methods.push('噴劑');
+                if (data.length === 0) {
+                    this.resultsContainer.innerHTML = `<div class="col-12 text-center py-5 text-muted"><i class="bi bi-search fs-1 d-block mb-3 opacity-50"></i><p class="fs-5">找不到符合條件的藥品</p></div>`;
+                    return;
+                }
 
-            let tags = '';
-            if (drug['心絲蟲'] === 'TRUE') tags += `<span class="badge text-bg-danger me-1 mb-1"><i class="bi bi-heart-fill"></i> 心絲蟲</span>`;
-            if (drug['跳蚤'] === 'TRUE' || drug['壁蝨'] === 'TRUE') tags += `<span class="badge text-bg-success me-1 mb-1"><i class="bi bi-bug-fill"></i> 蚤蝨</span>`;
-            
-            html += `
+                let html = '';
+                data.forEach(drug => {
+                    let methods = [];
+                    if (drug['口服'] === 'TRUE') methods.push('口服');
+                    if (drug['滴劑'] === 'TRUE') methods.push('滴劑');
+                    if (drug['噴劑'] === 'TRUE') methods.push('噴劑');
+
+                    let tags = '';
+                    if (drug['心絲蟲'] === 'TRUE') tags += `<span class="badge text-bg-danger me-1 mb-1"><i class="bi bi-heart-fill"></i> 心絲蟲</span>`;
+                    if (drug['跳蚤'] === 'TRUE' || drug['壁蝨'] === 'TRUE') tags += `<span class="badge text-bg-success me-1 mb-1"><i class="bi bi-bug-fill"></i> 蚤蝨</span>`;
+
+                    html += `
                 <div class="col-12 col-md-6">
                     <div class="card shadow-sm result-card h-100" onclick="window.app.showDetails('${drug['商品代號']}')">
                         <div class="card-body">
@@ -381,91 +529,92 @@ class AppView {
                     </div>
                 </div>
             `;
-        });
-        this.resultsContainer.innerHTML = html;
-    }
+                });
+                this.resultsContainer.innerHTML = html;
+            }
 
-    renderModal(drug, keys) {
-        document.getElementById('m_title').textContent = drug['商品'];
-        
-        let tagsHtml = '';
-        if(drug['口服'] === 'TRUE') tagsHtml += `<span class="badge badge-method fs-6">口服</span>`;
-        if(drug['滴劑'] === 'TRUE') tagsHtml += `<span class="badge badge-method fs-6">滴劑</span>`;
-        if(drug['噴劑'] === 'TRUE') tagsHtml += `<span class="badge badge-method fs-6">噴劑</span>`;
-        document.getElementById('m_tags').innerHTML = tagsHtml;
+            renderModal(drug, keys) {
+                document.getElementById('m_title').textContent = drug['商品'];
 
-        let targetHtml = '';
-        if(drug['犬'] === 'TRUE') targetHtml += `<li class="list-group-item bg-transparent px-0 text-success fw-bold"><i class="bi bi-check-circle-fill"></i> 狗：最小 ${drug[keys.minW] || 0}kg / ${drug[keys.minA] || 0}天大</li>`;
-        if(drug['貓'] === 'TRUE') targetHtml += `<li class="list-group-item bg-transparent px-0 text-success fw-bold"><i class="bi bi-check-circle-fill"></i> 貓：最小 ${drug[keys.minW] || 0}kg / ${drug[keys.minA] || 0}天大</li>`;
-        document.getElementById('m_targets').innerHTML = targetHtml;
+                let tagsHtml = '';
+                if (drug['口服'] === 'TRUE') tagsHtml += `<span class="badge badge-method fs-6">口服</span>`;
+                if (drug['滴劑'] === 'TRUE') tagsHtml += `<span class="badge badge-method fs-6">滴劑</span>`;
+                if (drug['噴劑'] === 'TRUE') tagsHtml += `<span class="badge badge-method fs-6">噴劑</span>`;
+                document.getElementById('m_tags').innerHTML = tagsHtml;
 
-        let scope = [];
-        if (drug['跳蚤'] === 'TRUE' || drug['壁蝨'] === 'TRUE') scope.push('跳蚤/壁蝨');
-        if (drug['心絲蟲'] === 'TRUE') scope.push('心絲蟲');
-        if (drug[keys.miteAll] === 'TRUE') scope.push('毛囊/疥癬/耳疥蟲');
-        if (drug['絛蟲'] === 'TRUE') scope.push('絛蟲');
-        if (drug[keys.roundworm] === 'TRUE' || drug[keys.hookworm] === 'TRUE') scope.push('多種腸道線蟲');
-        document.getElementById('m_scope').textContent = scope.join('、') || '無特別標記';
+                let targetHtml = '';
+                if (drug['犬'] === 'TRUE') targetHtml += `<li class="list-group-item bg-transparent px-0 text-success fw-bold"><i class="bi bi-check-circle-fill"></i> 狗：最小 ${drug[keys.minW] || 0}kg / ${drug[keys.minA] || 0}天大</li>`;
+                if (drug['貓'] === 'TRUE') targetHtml += `<li class="list-group-item bg-transparent px-0 text-success fw-bold"><i class="bi bi-check-circle-fill"></i> 貓：最小 ${drug[keys.minW] || 0}kg / ${drug[keys.minA] || 0}天大</li>`;
+                document.getElementById('m_targets').innerHTML = targetHtml;
 
-        let warnings = [];
-        if(drug['懷孕'] === 'FALSE') warnings.push('⚠️ 不建議於懷孕期使用');
-        if(drug['勿碰水時間(hr)']) warnings.push(`⚠️ 點藥後 ${drug['勿碰水時間(hr)']} 小時內勿碰水`);
-        if(drug['內容3(資訊補充)']) warnings.push(drug['內容3(資訊補充)']);
-        
-        document.getElementById('m_notes').innerHTML = warnings.join('<br>') || '依仿單指示正常使用';
-        document.getElementById('m_ingredients').textContent = `主成分：${drug['內容1(主要內容)'] || '未建立'}`;
-    }
-}
+                let scope = [];
+                if (drug['跳蚤'] === 'TRUE' || drug['壁蝨'] === 'TRUE') scope.push('跳蚤/壁蝨');
+                if (drug['心絲蟲'] === 'TRUE') scope.push('心絲蟲');
+                if (drug[keys.miteAll] === 'TRUE') scope.push('毛囊/疥癬/耳疥蟲');
+                if (drug['絛蟲'] === 'TRUE') scope.push('絛蟲');
+                if (drug[keys.roundworm] === 'TRUE' || drug[keys.hookworm] === 'TRUE') scope.push('多種腸道線蟲');
+                document.getElementById('m_scope').textContent = scope.join('、') || '無特別標記';
 
-class AppController {
-    constructor(model, view) {
-        this.model = model;
-        this.view = view;
-        this.startApp();
-    }
+                let warnings = [];
+                if (drug['懷孕'] === 'FALSE') warnings.push('⚠️ 不建議於懷孕期使用');
+                if (drug['勿碰水時間(hr)']) warnings.push(`⚠️ 點藥後 ${drug['勿碰水時間(hr)']} 小時內勿碰水`);
+                if (drug['內容3(資訊補充)']) warnings.push(drug['內容3(資訊補充)']);
 
-    async startApp() {
-        this.view.resultsContainer.innerHTML = '<div class="col-12 text-center py-5"><div class="spinner-border text-primary" role="status"></div><p class="mt-2 text-muted">正在同步雲端藥典...</p></div>';
-        await this.model.init(); 
-        
-        // 初始化時，根據預設選單設定成年 UI
-        this.refreshAdultUI();
-
-        // 綁定連動：當物種切換或成年框被勾選時，更新 UI
-        document.getElementById('species').addEventListener('change', () => this.refreshAdultUI());
-        document.getElementById('isAdult').addEventListener('change', () => this.refreshAdultUI());
-
-        this.view.bindEvents(() => this.handleSearch());
-        this.handleSearch(); 
-    }
-
-    // 將最高天數派送給 View 處理
-    refreshAdultUI() {
-        const species = document.getElementById('species').value;
-        const maxDays = species === 'dog' ? this.model.maxAgeDays.dog : this.model.maxAgeDays.cat;
-        this.view.updateAdultUI(species, maxDays);
-    }
-
-    handleSearch() {
-        const mode = this.view.getMode();
-        const criteria = this.view.getCriteria(mode);
-        const data = this.model.getFilteredData(mode, criteria);
-        this.view.renderResults(data);
-    }
-
-    showDetails(drugId) {
-        const drug = this.model.database.find(d => d['商品代號'] === drugId);
-        if (drug) {
-            this.view.renderModal(drug, this.model.k);
-            this.view.modal.show();
+                document.getElementById('m_notes').innerHTML = warnings.join('<br>') || '依仿單指示正常使用';
+                document.getElementById('m_ingredients').textContent = `主成分：${drug['內容1(主要內容)'] || '未建立'}`;
+            }
         }
-    }
-}
 
-document.addEventListener('DOMContentLoaded', () => {
-    window.app = new AppController(new DrugModel(), new AppView());
-});
-</script>
+        class AppController {
+            constructor(model, view) {
+                this.model = model;
+                this.view = view;
+                this.startApp();
+            }
+
+            async startApp() {
+                this.view.resultsContainer.innerHTML = '<div class="col-12 text-center py-5"><div class="spinner-border text-primary" role="status"></div><p class="mt-2 text-muted">正在同步雲端藥典...</p></div>';
+                await this.model.init();
+
+                // 初始化時，根據預設選單設定成年 UI
+                this.refreshAdultUI();
+
+                // 綁定連動：當物種切換或成年框被勾選時，更新 UI
+                document.getElementById('species').addEventListener('change', () => this.refreshAdultUI());
+                document.getElementById('isAdult').addEventListener('change', () => this.refreshAdultUI());
+
+                this.view.bindEvents(() => this.handleSearch());
+                this.handleSearch();
+            }
+
+            // 將最高天數派送給 View 處理
+            refreshAdultUI() {
+                const species = document.getElementById('species').value;
+                const maxDays = species === 'dog' ? this.model.maxAgeDays.dog : this.model.maxAgeDays.cat;
+                this.view.updateAdultUI(species, maxDays);
+            }
+
+            handleSearch() {
+                const mode = this.view.getMode();
+                const criteria = this.view.getCriteria(mode);
+                const data = this.model.getFilteredData(mode, criteria);
+                this.view.renderResults(data);
+            }
+
+            showDetails(drugId) {
+                const drug = this.model.database.find(d => d['商品代號'] === drugId);
+                if (drug) {
+                    this.view.renderModal(drug, this.model.k);
+                    this.view.modal.show();
+                }
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            window.app = new AppController(new DrugModel(), new AppView());
+        });
+    </script>
 
 </body>
+
 </html>
