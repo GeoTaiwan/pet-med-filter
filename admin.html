@@ -604,3 +604,609 @@
 </body>
 
 </html>
+<!DOCTYPE html>
+<html lang="zh-TW" data-bs-theme="light">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>犬貓藥典 - 後台管理系統</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <style>
+        body {
+            background-color: #f4f6f9;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .auth-container {
+            max-width: 400px;
+            margin: 50px auto;
+        }
+
+        .admin-container {
+            max-width: 700px;
+            margin: auto;
+        }
+
+        .card {
+            border-radius: 12px;
+            border: none;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="authView" class="container auth-container">
+        <div class="text-center mb-4">
+            <h2 class="text-primary fw-bold"><i class="bi bi-shield-lock-fill"></i> 後台管理系統</h2>
+            <p class="text-muted">請登入以管理藥品資料庫</p>
+        </div>
+
+        <div class="card shadow-sm">
+            <div class="card-body p-4">
+                <form id="loginForm">
+                    <div class="mb-3">
+                        <label class="form-label fw-bold small">帳號 (Account)</label>
+                        <input type="text" class="form-control" id="loginAccount" required>
+                    </div>
+                    <div class="mb-4">
+                        <label class="form-label fw-bold small">密碼 (Password)</label>
+                        <input type="password" class="form-control" id="loginPassword" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100 fw-bold mb-3" id="loginBtn">登入</button>
+                    <div class="text-center">
+                        <a href="#" class="text-decoration-none small" onclick="toggleAuth('register')">沒有帳號？申請註冊</a>
+                    </div>
+                </form>
+
+                <form id="registerForm" class="d-none">
+                    <div class="mb-3">
+                        <label class="form-label fw-bold small">設定帳號</label>
+                        <input type="text" class="form-control" id="regAccount" required>
+                    </div>
+                    <div class="mb-4">
+                        <label class="form-label fw-bold small">設定密碼</label>
+                        <input type="password" class="form-control" id="regPassword" required>
+                    </div>
+                    <button type="submit" class="btn btn-success w-100 fw-bold mb-3" id="regBtn">送出申請</button>
+                    <div class="text-center">
+                        <a href="#" class="text-decoration-none text-secondary small" onclick="toggleAuth('login')"><i
+                                class="bi bi-arrow-left"></i> 返回登入</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div id="adminView" class="container py-4 admin-container d-none">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h3 class="text-primary fw-bold mb-0"><i class="bi bi-database-fill-gear"></i> 藥品資料庫管理</h3>
+            <div>
+                <span class="badge bg-secondary me-2" id="userRoleBadge">Role</span>
+                <span class="fw-bold me-3" id="userNameDisplay">User</span>
+                <button class="btn btn-sm btn-outline-danger" onclick="logout()">登出</button>
+            </div>
+        </div>
+
+        <div class="d-flex justify-content-between mb-3">
+            <div class="input-group w-50">
+                <span class="input-group-text bg-white"><i class="bi bi-search"></i></span>
+                <input type="text" class="form-control" id="adminSearch" placeholder="搜尋代號或名稱...">
+            </div>
+            <button class="btn btn-success fw-bold shadow-sm" onclick="openDrugModal()"><i class="bi bi-plus-lg"></i>
+                新增藥品</button>
+        </div>
+
+        <div class="card shadow-sm border-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>代號</th>
+                            <th>藥品名稱</th>
+                            <th>物種</th>
+                            <th>最後修改</th>
+                            <th class="text-end">操作</th>
+                        </tr>
+                    </thead>
+                    <tbody id="drugTableBody">
+                        <tr>
+                            <td colspan="5" class="text-center py-4 text-muted">正在載入資料...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="drugEditorModal" data-bs-backdrop="static" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered modal-xl modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title fw-bold" id="modalTitle">新增藥品</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body bg-body-tertiary">
+                    <form id="drugForm">
+                        <input type="hidden" id="isNewRecord" value="true">
+
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <div class="card shadow-sm border-0 mb-3">
+                                    <div class="card-body">
+                                        <h6 class="fw-bold text-secondary border-bottom pb-2"><i
+                                                class="bi bi-box-seam"></i> 基本資訊與規格</h6>
+                                        <div class="row g-2 mb-3">
+                                            <div class="col-4"><label class="small fw-bold">代號 *</label><input
+                                                    type="text" class="form-control form-control-sm" id="f_ID" required>
+                                            </div>
+                                            <div class="col-8"><label class="small fw-bold">商品名稱 *</label><input
+                                                    type="text" class="form-control form-control-sm" id="f_Name"
+                                                    required></div>
+                                            <div class="col-4"><label class="small fw-bold">最小年齡(天)</label><input
+                                                    type="number" class="form-control form-control-sm" id="f_MinAge">
+                                            </div>
+                                            <div class="col-4"><label class="small fw-bold">最小體重(kg)</label><input
+                                                    type="number" step="0.01" class="form-control form-control-sm"
+                                                    id="f_MinW1"></div>
+                                            <div class="col-4"><label class="small fw-bold">商品最小體重</label><input
+                                                    type="number" step="0.01" class="form-control form-control-sm"
+                                                    id="f_MinW2"></div>
+                                            <div class="col-6"><label class="small fw-bold">效期時長</label><input
+                                                    type="text" class="form-control form-control-sm" id="f_Duration"
+                                                    placeholder="例如: 每月"></div>
+                                            <div class="col-6"><label class="small fw-bold">勿碰水時間(hr)</label><input
+                                                    type="number" class="form-control form-control-sm" id="f_Water">
+                                            </div>
+                                        </div>
+
+                                        <h6 class="fw-bold text-secondary border-bottom pb-2 mt-4"><i
+                                                class="bi bi-capsule"></i> 適用物種與劑型</h6>
+                                        <div class="row g-2">
+                                            <div class="col-3">
+                                                <div class="form-check form-switch"><input class="form-check-input"
+                                                        type="checkbox" id="f_Dog"><label class="small">犬</label></div>
+                                            </div>
+                                            <div class="col-3">
+                                                <div class="form-check form-switch"><input class="form-check-input"
+                                                        type="checkbox" id="f_Cat"><label class="small">貓</label></div>
+                                            </div>
+                                            <div class="col-3">
+                                                <div class="form-check form-switch"><input class="form-check-input"
+                                                        type="checkbox" id="f_Endo"><label class="small">體內</label>
+                                                </div>
+                                            </div>
+                                            <div class="col-3">
+                                                <div class="form-check form-switch"><input class="form-check-input"
+                                                        type="checkbox" id="f_Ecto"><label class="small">體外</label>
+                                                </div>
+                                            </div>
+                                            <div class="col-12">
+                                                <hr class="my-1 border-secondary opacity-25">
+                                            </div>
+                                            <div class="col-3">
+                                                <div class="form-check form-switch"><input class="form-check-input"
+                                                        type="checkbox" id="f_Oral"><label class="small">口服</label>
+                                                </div>
+                                            </div>
+                                            <div class="col-3">
+                                                <div class="form-check form-switch"><input class="form-check-input"
+                                                        type="checkbox" id="f_Drop"><label class="small">滴劑</label>
+                                                </div>
+                                            </div>
+                                            <div class="col-3">
+                                                <div class="form-check form-switch"><input class="form-check-input"
+                                                        type="checkbox" id="f_Spray"><label class="small">噴劑</label>
+                                                </div>
+                                            </div>
+                                            <div class="col-3">
+                                                <div class="form-check form-switch"><input class="form-check-input"
+                                                        type="checkbox" id="f_Inject"><label class="small">針劑</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="card shadow-sm border-0 mb-3">
+                                    <div class="card-body">
+                                        <h6 class="fw-bold text-secondary border-bottom pb-2"><i
+                                                class="bi bi-shield-exclamation"></i> 安全性與成分</h6>
+                                        <div class="row g-2 mb-2">
+                                            <div class="col-4">
+                                                <div class="form-check form-switch"><input class="form-check-input"
+                                                        type="checkbox" id="f_Pregnant"><label class="small">懷孕</label>
+                                                </div>
+                                            </div>
+                                            <div class="col-4">
+                                                <div class="form-check form-switch"><input class="form-check-input"
+                                                        type="checkbox" id="f_Nursing"><label
+                                                        class="small">配種/哺乳</label></div>
+                                            </div>
+                                            <div class="col-4"><label class="small fw-bold">中毒(劑量倍率)</label><input
+                                                    type="number" class="form-control form-control-sm" id="f_Toxic">
+                                            </div>
+                                            <div class="col-12">
+                                                <div class="form-check form-switch"><input class="form-check-input"
+                                                        type="checkbox" id="f_Collie1"><label
+                                                        class="small text-danger">仿單同意-牧羊犬</label></div>
+                                            </div>
+                                            <div class="col-12">
+                                                <div class="form-check form-switch"><input class="form-check-input"
+                                                        type="checkbox" id="f_Collie2"><label
+                                                        class="small text-danger">牧羊犬緊示(相對安全)</label></div>
+                                            </div>
+                                        </div>
+                                        <div class="mt-2">
+                                            <label class="small fw-bold text-muted">內容1(主要內容)</label><textarea
+                                                class="form-control form-control-sm mb-1" id="f_C1" rows="1"></textarea>
+                                            <label class="small fw-bold text-muted">內容2(其他補充)</label><textarea
+                                                class="form-control form-control-sm mb-1" id="f_C2" rows="1"></textarea>
+                                            <label class="small fw-bold text-muted">內容3(資訊補充)</label><textarea
+                                                class="form-control form-control-sm" id="f_C3" rows="2"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-6">
+                                <div class="card shadow-sm border-0 mb-3">
+                                    <div class="card-body">
+                                        <h6 class="fw-bold text-secondary border-bottom pb-2"><i class="bi bi-bug"></i>
+                                            寄生蟲防護能力 (TRUE/FALSE)</h6>
+                                        <div class="row g-2">
+                                            <div class="col-12 fw-bold small text-primary mt-2">體內寄生蟲</div>
+                                            <div class="col-4">
+                                                <div class="form-check form-switch"><input class="form-check-input"
+                                                        type="checkbox" id="f_Heartworm"><label
+                                                        class="small">心絲蟲</label></div>
+                                            </div>
+                                            <div class="col-4">
+                                                <div class="form-check form-switch"><input class="form-check-input"
+                                                        type="checkbox" id="f_Tapeworm"><label class="small">絛蟲</label>
+                                                </div>
+                                            </div>
+                                            <div class="col-4">
+                                                <div class="form-check form-switch"><input class="form-check-input"
+                                                        type="checkbox" id="f_Roundworm"><label
+                                                        class="small">腸道線蟲(蛔)</label></div>
+                                            </div>
+                                            <div class="col-4">
+                                                <div class="form-check form-switch"><input class="form-check-input"
+                                                        type="checkbox" id="f_Hookworm"><label
+                                                        class="small">腸道線蟲(鉤)</label></div>
+                                            </div>
+                                            <div class="col-4">
+                                                <div class="form-check form-switch"><input class="form-check-input"
+                                                        type="checkbox" id="f_Whipworm"><label
+                                                        class="small">腸道線蟲(鞭)</label></div>
+                                            </div>
+
+                                            <div class="col-12 fw-bold small text-success mt-3">體外寄生蟲</div>
+                                            <div class="col-4">
+                                                <div class="form-check form-switch"><input class="form-check-input"
+                                                        type="checkbox" id="f_Flea"><label class="small">跳蚤</label>
+                                                </div>
+                                            </div>
+                                            <div class="col-4">
+                                                <div class="form-check form-switch"><input class="form-check-input"
+                                                        type="checkbox" id="f_Tick"><label class="small">壁蝨</label>
+                                                </div>
+                                            </div>
+                                            <div class="col-4">
+                                                <div class="form-check form-switch"><input class="form-check-input"
+                                                        type="checkbox" id="f_Mosquito"><label
+                                                        class="small">驅蚊/沙蠅</label></div>
+                                            </div>
+                                            <div class="col-12">
+                                                <div class="form-check form-switch"><input class="form-check-input"
+                                                        type="checkbox" id="f_FAD"><label
+                                                        class="small">根據藥物治療FAD</label></div>
+                                            </div>
+
+                                            <div class="col-12 fw-bold small text-info mt-3">皮膚蟎蟲系列</div>
+                                            <div class="col-12">
+                                                <div class="form-check form-switch"><input class="form-check-input"
+                                                        type="checkbox" id="f_MiteAll"><label class="small">毛囊/疥癬/耳疥
+                                                        (綜合)</label></div>
+                                            </div>
+                                            <div class="col-6">
+                                                <div class="form-check form-switch"><input class="form-check-input"
+                                                        type="checkbox" id="f_MiteS"><label class="small">疥癬</label>
+                                                </div>
+                                            </div>
+                                            <div class="col-6">
+                                                <div class="form-check form-switch"><input class="form-check-input"
+                                                        type="checkbox" id="f_MiteO"><label class="small">耳疥</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-primary fw-bold px-4" id="saveDrugBtn"
+                        onclick="submitDrugForm()">儲存寫入</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const API_URL = 'https://script.google.com/macros/s/AKfycbxThirfgZBV9IYqoaL8e1WNwp12vLGDXMuTftuWpUihNBinFTkUE01ku30FXnbkq0GsZA/exec';
+        const authView = document.getElementById('authView');
+        const adminView = document.getElementById('adminView');
+        let currentDrugData = []; // 暫存抓下來的藥品資料
+        let editorModal = null; // Bootstrap Modal 實例
+
+        // 初始化與檢查登入狀態
+        function checkLoginStatus() {
+            const token = localStorage.getItem('petAdminToken');
+            if (token) {
+                authView.classList.add('d-none');
+                adminView.classList.remove('d-none');
+                document.getElementById('userNameDisplay').textContent = localStorage.getItem('petAdminAccount');
+                document.getElementById('userRoleBadge').textContent = localStorage.getItem('petAdminRole');
+                document.getElementById('userRoleBadge').className = localStorage.getItem('petAdminRole') === 'SuperAdmin' ? 'badge bg-danger me-2' : 'badge bg-info text-dark me-2';
+
+                // 登入成功後，立刻載入藥品清單
+                loadDrugs();
+            } else {
+                authView.classList.remove('d-none');
+                adminView.classList.add('d-none');
+            }
+        }
+
+        function toggleAuth(mode) {
+            document.getElementById('loginForm').classList.toggle('d-none', mode === 'register');
+            document.getElementById('registerForm').classList.toggle('d-none', mode === 'login');
+        }
+
+        function logout() {
+            localStorage.removeItem('petAdminToken');
+            localStorage.removeItem('petAdminAccount');
+            localStorage.removeItem('petAdminRole');
+            checkLoginStatus();
+        }
+
+        // 封裝一個帶有 Token 的通用 Fetch 函數
+        async function apiCall(action, data = {}) {
+            const token = localStorage.getItem('petAdminToken');
+            const response = await fetch(API_URL, {
+                method: 'POST',
+                body: JSON.stringify({ action: action, token: token, data: data })
+            });
+            return await response.json();
+        }
+
+        // ==========================================
+        // CRUD 核心邏輯
+        // ==========================================
+
+        // [READ] 載入資料表
+        async function loadDrugs() {
+            try {
+                const result = await apiCall('getDrugs');
+                if (result.success) {
+                    currentDrugData = result.data;
+                    renderTable(currentDrugData);
+                } else {
+                    alert(result.message);
+                    if (result.message.includes('重新登入')) logout(); // Token 過期或被停權
+                }
+            } catch (e) {
+                console.error(e);
+                document.getElementById('drugTableBody').innerHTML = '<tr><td colspan="5" class="text-danger text-center py-4">載入失敗，請檢查網路連線。</td></tr>';
+            }
+        }
+
+        // 畫出表格
+        function renderTable(data) {
+            let html = '';
+            data.forEach(drug => {
+                let species = [];
+                if (drug['犬'] === 'TRUE') species.push('🐶');
+                if (drug['貓'] === 'TRUE') species.push('🐱');
+
+                html += `
+            <tr>
+                <td class="fw-bold">${drug['商品代號']}</td>
+                <td>${drug['商品']}</td>
+                <td>${species.join(' ')}</td>
+                <td class="small text-muted">${drug['Last_Modified_By'] || '-'} <br> <span class="opacity-75">${drug['Last_Modified_Time'] || ''}</span></td>
+                <td class="text-end">
+                    <button class="btn btn-sm btn-outline-primary me-1" onclick="openDrugModal('${drug['商品代號']}')"><i class="bi bi-pencil-square"></i></button>
+                    <button class="btn btn-sm btn-outline-danger" onclick="deleteDrug('${drug['商品代號']}')"><i class="bi bi-trash3-fill"></i></button>
+                </td>
+            </tr>
+        `;
+            });
+            document.getElementById('drugTableBody').innerHTML = html || '<tr><td colspan="5" class="text-center py-4">尚無藥品資料</td></tr>';
+        }
+
+        // [UI] 打開表單準備新增或編輯 (完整資料對應)
+        function openDrugModal(drugId = null) {
+            if (!editorModal) editorModal = new bootstrap.Modal(document.getElementById('drugEditorModal'));
+            document.getElementById('drugForm').reset();
+
+            if (drugId) {
+                document.getElementById('modalTitle').textContent = '編輯藥品 ' + drugId;
+                document.getElementById('isNewRecord').value = 'false';
+                document.getElementById('f_ID').readOnly = true;
+
+                const d = currentDrugData.find(x => x['商品代號'] === drugId);
+
+                // 填入文字/數值
+                document.getElementById('f_ID').value = d['商品代號'] || '';
+                document.getElementById('f_Name').value = d['商品'] || '';
+                document.getElementById('f_MinAge').value = d['最小年齡（天）'] || '';
+                document.getElementById('f_MinW1').value = d['最小體重（公斤）'] || '';
+                document.getElementById('f_MinW2').value = d['商品最小體重（kg)'] || '';
+                document.getElementById('f_Duration').value = d['效期時長'] || '';
+                document.getElementById('f_Water').value = d['勿碰水時間(hr)'] || '';
+                document.getElementById('f_Toxic').value = d['中毒(劑量倍率)'] || '';
+                document.getElementById('f_C1').value = d['內容1(主要內容)'] || '';
+                document.getElementById('f_C2').value = d['內容2(其他驅蟲補充)'] || '';
+                document.getElementById('f_C3').value = d['內容3(資訊補充)'] || '';
+
+                // 填入核取方塊 (布林值轉換)
+                // 建立一個小工具：不管後端傳來的是布林值 true 還是字串 'TRUE'，都判定為勾選
+                const isChecked = (val) => val === true || String(val).toUpperCase() === 'TRUE';
+
+                // 填入核取方塊 (使用 isChecked 工具判斷)
+                document.getElementById('f_Dog').checked = isChecked(d['犬']);
+                document.getElementById('f_Cat').checked = isChecked(d['貓']);
+                document.getElementById('f_Endo').checked = isChecked(d['體內']);
+                document.getElementById('f_Ecto').checked = isChecked(d['體外']);
+                document.getElementById('f_Oral').checked = isChecked(d['口服']);
+                document.getElementById('f_Drop').checked = isChecked(d['滴劑']);
+                document.getElementById('f_Spray').checked = isChecked(d['噴劑']);
+                document.getElementById('f_Inject').checked = isChecked(d['針劑']);
+
+                document.getElementById('f_Heartworm').checked = isChecked(d['心絲蟲']);
+                document.getElementById('f_Tapeworm').checked = isChecked(d['絛蟲']);
+                document.getElementById('f_Roundworm').checked = isChecked(d['腸道線蟲（蛔）']);
+                document.getElementById('f_Hookworm').checked = isChecked(d['腸道線蟲（鉤）']);
+                document.getElementById('f_Whipworm').checked = isChecked(d['腸道線蟲（鞭）']);
+
+                document.getElementById('f_Flea').checked = isChecked(d['跳蚤']);
+                document.getElementById('f_Tick').checked = isChecked(d['壁蝨']);
+                document.getElementById('f_Mosquito').checked = isChecked(d['驅蚊/沙蠅']);
+                document.getElementById('f_FAD').checked = isChecked(d['根據藥物\n治療FAD']);
+
+                document.getElementById('f_MiteAll').checked = isChecked(d['皮膚蟎蟲（毛囊/疥癬/耳疥）']);
+                document.getElementById('f_MiteS').checked = isChecked(d['皮膚蟎蟲（疥癬）']);
+                document.getElementById('f_MiteO').checked = isChecked(d['皮膚蟎蟲（耳疥）']);
+
+                document.getElementById('f_Pregnant').checked = isChecked(d['懷孕']);
+                document.getElementById('f_Nursing').checked = isChecked(d['配種/哺乳']);
+                document.getElementById('f_Collie1').checked = isChecked(d['仿單同意-牧羊犬\n（多不同意犬新寶）']);
+                document.getElementById('f_Collie2').checked = isChecked(d['根據藥物\n牧羊犬緊示（milbemycin/Selamectin相對安全）']);
+            } else {
+                document.getElementById('modalTitle').textContent = '新增藥品';
+                document.getElementById('isNewRecord').value = 'true';
+                document.getElementById('f_ID').readOnly = false;
+            }
+            editorModal.show();
+        }
+
+        // [CREATE & UPDATE] 送出儲存
+        async function submitDrugForm() {
+            if (!document.getElementById('f_ID').value || !document.getElementById('f_Name').value) {
+                alert('代號與名稱為必填！'); return;
+            }
+
+            const btn = document.getElementById('saveDrugBtn');
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> 寫入雲端中...';
+            btn.disabled = true;
+
+            // 將所有值精準對應至 CSV 的標題名稱
+            const payloadData = {
+                isNew: document.getElementById('isNewRecord').value === 'true',
+                drug: {
+                    '商品代號': document.getElementById('f_ID').value,
+                    '商品': document.getElementById('f_Name').value,
+                    '犬': document.getElementById('f_Dog').checked ? 'TRUE' : 'FALSE',
+                    '貓': document.getElementById('f_Cat').checked ? 'TRUE' : 'FALSE',
+                    '體內': document.getElementById('f_Endo').checked ? 'TRUE' : 'FALSE',
+                    '體外': document.getElementById('f_Ecto').checked ? 'TRUE' : 'FALSE',
+                    '口服': document.getElementById('f_Oral').checked ? 'TRUE' : 'FALSE',
+                    '滴劑': document.getElementById('f_Drop').checked ? 'TRUE' : 'FALSE',
+                    '噴劑': document.getElementById('f_Spray').checked ? 'TRUE' : 'FALSE',
+                    '針劑': document.getElementById('f_Inject').checked ? 'TRUE' : 'FALSE',
+                    '最小年齡（天）': document.getElementById('f_MinAge').value,
+                    '最小體重（公斤）': document.getElementById('f_MinW1').value,
+                    '商品最小體重（kg)': document.getElementById('f_MinW2').value,
+                    '效期時長': document.getElementById('f_Duration').value,
+                    '心絲蟲': document.getElementById('f_Heartworm').checked ? 'TRUE' : 'FALSE',
+                    '絛蟲': document.getElementById('f_Tapeworm').checked ? 'TRUE' : 'FALSE',
+                    '腸道線蟲（蛔）': document.getElementById('f_Roundworm').checked ? 'TRUE' : 'FALSE',
+                    '腸道線蟲（鉤）': document.getElementById('f_Hookworm').checked ? 'TRUE' : 'FALSE',
+                    '腸道線蟲（鞭）': document.getElementById('f_Whipworm').checked ? 'TRUE' : 'FALSE',
+                    '跳蚤': document.getElementById('f_Flea').checked ? 'TRUE' : 'FALSE',
+                    '根據藥物\n治療FAD': document.getElementById('f_FAD').checked ? 'TRUE' : 'FALSE',
+                    '壁蝨': document.getElementById('f_Tick').checked ? 'TRUE' : 'FALSE',
+                    '皮膚蟎蟲（毛囊/疥癬/耳疥）': document.getElementById('f_MiteAll').checked ? 'TRUE' : 'FALSE',
+                    '皮膚蟎蟲（疥癬）': document.getElementById('f_MiteS').checked ? 'TRUE' : 'FALSE',
+                    '皮膚蟎蟲（耳疥）': document.getElementById('f_MiteO').checked ? 'TRUE' : 'FALSE',
+                    '驅蚊/沙蠅': document.getElementById('f_Mosquito').checked ? 'TRUE' : 'FALSE',
+                    '仿單同意-牧羊犬\n（多不同意犬新寶）': document.getElementById('f_Collie1').checked ? 'TRUE' : 'FALSE',
+                    '根據藥物\n牧羊犬緊示（milbemycin/Selamectin相對安全）': document.getElementById('f_Collie2').checked ? 'TRUE' : 'FALSE',
+                    '懷孕': document.getElementById('f_Pregnant').checked ? 'TRUE' : 'FALSE',
+                    '配種/哺乳': document.getElementById('f_Nursing').checked ? 'TRUE' : 'FALSE',
+                    '中毒(劑量倍率)': document.getElementById('f_Toxic').value,
+                    '勿碰水時間(hr)': document.getElementById('f_Water').value,
+                    '內容1(主要內容)': document.getElementById('f_C1').value,
+                    '內容2(其他驅蟲補充)': document.getElementById('f_C2').value,
+                    '內容3(資訊補充)': document.getElementById('f_C3').value
+                }
+            };
+
+            try {
+                const result = await apiCall('saveDrug', payloadData);
+                if (result.success) {
+                    editorModal.hide();
+                    loadDrugs();
+                } else {
+                    alert(result.message);
+                }
+            } catch (e) {
+                alert('儲存失敗，請檢查網路連線');
+            } finally {
+                btn.innerHTML = '儲存寫入';
+                btn.disabled = false;
+            }
+        }
+
+        // [DELETE] 刪除藥品
+        async function deleteDrug(drugId) {
+            if (!confirm(`⚠️ 警告：確定要永久刪除藥品「${drugId}」嗎？這個動作無法復原！`)) return;
+
+            try {
+                const result = await apiCall('deleteDrug', { drugId: drugId });
+                if (result.success) {
+                    loadDrugs(); // 更新畫面
+                } else {
+                    alert(result.message);
+                }
+            } catch (e) {
+                alert('刪除失敗');
+            }
+        }
+
+        // 註冊與登入處理 (保留你原本的邏輯，但改用 apiCall 簡化)
+        document.getElementById('registerForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('regBtn'); btn.disabled = true;
+            const result = await apiCall('register', { account: document.getElementById('regAccount').value, password: document.getElementById('regPassword').value });
+            alert(result.message);
+            if (result.success) toggleAuth('login');
+            btn.disabled = false;
+        });
+
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('loginBtn'); btn.disabled = true;
+            const result = await apiCall('login', { account: document.getElementById('loginAccount').value, password: document.getElementById('loginPassword').value });
+            if (result.success) {
+                localStorage.setItem('petAdminToken', result.token);
+                localStorage.setItem('petAdminAccount', result.account);
+                localStorage.setItem('petAdminRole', result.role);
+                checkLoginStatus();
+            } else alert(result.message);
+            btn.disabled = false;
+        });
+
+        // 啟動點
+        document.addEventListener('DOMContentLoaded', checkLoginStatus);
+    </script>
+
+</body>
+
+</html>
