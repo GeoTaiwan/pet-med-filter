@@ -435,7 +435,54 @@
                 document.getElementById('isNewRecord').value = 'false';
                 document.getElementById('f_ID').readOnly = true;
 
-                // ...(中間的 d['商品'] 等等都保留)...
+                const d = currentDrugData.find(x => x['商品代號'] === drugId);
+
+                // 填入文字/數值
+                document.getElementById('f_ID').value = d['商品代號'] || '';
+                document.getElementById('f_Name').value = d['商品'] || '';
+                document.getElementById('f_MinAge').value = d['最小年齡（天）'] || '';
+                document.getElementById('f_MinW1').value = d['最小體重（公斤）'] || '';
+                document.getElementById('f_MinW2').value = d['商品最小體重（kg)'] || '';
+                document.getElementById('f_Duration').value = d['效期時長'] || '';
+                document.getElementById('f_Water').value = d['勿碰水時間(hr)'] || '';
+                document.getElementById('f_Toxic').value = d['中毒(劑量倍率)'] || '';
+                document.getElementById('f_C1').value = d['內容1(主要內容)'] || '';
+                document.getElementById('f_C2').value = d['內容2(其他驅蟲補充)'] || '';
+                document.getElementById('f_C3').value = d['內容3(資訊補充)'] || '';
+
+                // 填入核取方塊 (布林值轉換)
+                // 建立一個小工具：不管後端傳來的是布林值 true 還是字串 'TRUE'，都判定為勾選
+                const isChecked = (val) => val === true || String(val).toUpperCase() === 'TRUE';
+
+                // 填入核取方塊 (使用 isChecked 工具判斷)
+                document.getElementById('f_Dog').checked = isChecked(d['犬']);
+                document.getElementById('f_Cat').checked = isChecked(d['貓']);
+                document.getElementById('f_Endo').checked = isChecked(d['體內']);
+                document.getElementById('f_Ecto').checked = isChecked(d['體外']);
+                document.getElementById('f_Oral').checked = isChecked(d['口服']);
+                document.getElementById('f_Drop').checked = isChecked(d['滴劑']);
+                document.getElementById('f_Spray').checked = isChecked(d['噴劑']);
+                document.getElementById('f_Inject').checked = isChecked(d['針劑']);
+
+                document.getElementById('f_Heartworm').checked = isChecked(d['心絲蟲']);
+                document.getElementById('f_Tapeworm').checked = isChecked(d['絛蟲']);
+                document.getElementById('f_Roundworm').checked = isChecked(d['腸道線蟲（蛔）']);
+                document.getElementById('f_Hookworm').checked = isChecked(d['腸道線蟲（鉤）']);
+                document.getElementById('f_Whipworm').checked = isChecked(d['腸道線蟲（鞭）']);
+
+                document.getElementById('f_Flea').checked = isChecked(d['跳蚤']);
+                document.getElementById('f_Tick').checked = isChecked(d['壁蝨']);
+                document.getElementById('f_Mosquito').checked = isChecked(d['驅蚊/沙蠅']);
+                document.getElementById('f_FAD').checked = isChecked(d['根據藥物\n治療FAD']);
+
+                document.getElementById('f_MiteAll').checked = isChecked(d['皮膚蟎蟲（毛囊/疥癬/耳疥）']);
+                document.getElementById('f_MiteS').checked = isChecked(d['皮膚蟎蟲（疥癬）']);
+                document.getElementById('f_MiteO').checked = isChecked(d['皮膚蟎蟲（耳疥）']);
+
+                document.getElementById('f_Pregnant').checked = isChecked(d['懷孕']);
+                document.getElementById('f_Nursing').checked = isChecked(d['配種/哺乳']);
+                document.getElementById('f_Collie1').checked = isChecked(d['仿單同意-牧羊犬\n（多不同意犬新寶）']);
+                document.getElementById('f_Collie2').checked = isChecked(d['根據藥物\n牧羊犬緊示（milbemycin/Selamectin相對安全）']);
                 
             } else {
                 // =====================================
